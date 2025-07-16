@@ -12,7 +12,7 @@ const HomePage = () => {
           <img src="/assets/images/logo/logo.png" alt="logo" />
           <hr />
           <div className="card-body" style={{ marginTop: "-60px" }}>
-            <h5 className="card-title">Indias No #1 Carrer Platform</h5>
+            <h5 className="card-title">Vietnam No #1 Career Platform</h5>
             <p className="card-text">
               Search and manage your jobs with ease. free and open source job
               ortal application by techinfoyt
