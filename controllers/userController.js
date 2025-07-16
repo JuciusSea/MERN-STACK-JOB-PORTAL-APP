@@ -3,7 +3,7 @@ import userModel from "../models/userModel.js";
 export const updateUserController = async (req, res, next) => {
   const { name, email, lastName } = req.body;
   if (!name || !email || !lastName) {
-    next("Please Provide All Fields");
+    return res.status(400).json({ success: false, message: "Please provide all fields" });
   }
   try {
     const user = await userModel.findOneAndUpdate(
@@ -21,7 +21,11 @@ export const updateUserController = async (req, res, next) => {
       token,
     });
   } catch (error) {
-    next(error.message);
+    console.error('Error in updateUserController:', error);
+    if (error.code === 11000) {
+      return res.status(400).json({ success: false, message: "Email already in use" });
+    }
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

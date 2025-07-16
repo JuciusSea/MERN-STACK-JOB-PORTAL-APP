@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import Layout from '../components/Layout/Layout';
 import InputFrom from '../components/shared/InputFrom';
 import Spinner from '../components/shared/Spinner';
@@ -17,9 +18,14 @@ const Jobs = () => {
         const { data } = await axios.get('/api/v1/jobs', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        setJobs(data.jobs);
+        if (data.success) {
+          setJobs(data.jobs);
+        } else {
+          toast.error('Failed to load jobs: ' + data.message);
+        }
       } catch (error) {
-        console.error('Error fetching jobs:', error);
+        console.error('Error fetching jobs:', error.response?.data || error.message);
+        toast.error('Failed to load jobs. Please try again.');
       }
     };
     fetchJobs();
@@ -51,8 +57,8 @@ const Jobs = () => {
                 <div className="card">
                   <div className="card-body">
                     <h5 className="card-title">{job.position}</h5>
-                    <p className="card-text">{job.company} - {job.location}</p>
-                    <p className="card-text">{job.description.substring(0, 100)}...</p>
+                    <p className="card-text">{job.company} - {job.workLocation}</p>
+                    <p className="card-text">{job.description ? job.description.substring(0, 100) : "No description"}...</p>
                     <Link to={`/jobs/${job._id}`} className="btn btn-primary">View Details</Link>
                   </div>
                 </div>

@@ -3,7 +3,7 @@ import {
   getUserController,
   updateUserController,
 } from "../controllers/userController.js";
-import userAuth from "../middelwares/authMiddleware.js";
+import userAuth from "../middlewares/authMiddleware.js"; // Fixed path
 
 //router object
 const router = express.Router();

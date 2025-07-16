@@ -18,9 +18,13 @@ const JobDetail = () => {
         const { data } = await axios.get(`/api/v1/jobs/${id}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        setJob(data);
+        if (data.success) {
+          setJob(data.job); // Adjust to match controller response
+        } else {
+          toast.error('Failed to load job: ' + data.message);
+        }
       } catch (error) {
-        console.error('Error fetching job:', error);
+        console.error('Error fetching job:', error.response?.data || error.message);
         toast.error('Failed to load job details');
       }
     };
@@ -36,7 +40,7 @@ const JobDetail = () => {
         toast.success('Application submitted successfully');
       }
     } catch (error) {
-      console.error('Apply error:', error);
+      console.error('Apply error:', error.response?.data || error.message);
       toast.error('Failed to apply. Please login.');
       navigate('/login');
     }
@@ -50,8 +54,8 @@ const JobDetail = () => {
       <div className="card">
         <div className="card-body">
           <h5 className="card-title">{job.company}</h5>
-          <p className="card-text">Location: {job.location}</p>
-          <p className="card-text">Description: {job.description}</p>
+          <p className="card-text">Location: {job.workLocation}</p>
+          <p className="card-text">Description: {job.description || "No description provided"}</p>
           <button onClick={handleApply} className="btn btn-primary">Apply Now</button>
         </div>
       </div>

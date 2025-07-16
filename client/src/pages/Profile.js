@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { setUser } from '../redux/features/auth/authSlice';
 import Layout from '../components/Layout/Layout';
 import InputFrom from '../components/shared/InputFrom';
 import Spinner from '../components/shared/Spinner';
@@ -13,6 +14,7 @@ const Profile = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (user) {
@@ -26,16 +28,19 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.put('/api/v1/user/profile', { name, lastName, email }, {
+      const { data } = await axios.put('/api/v1/user/update-user', { name, lastName, email }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       if (data.success) {
+        dispatch(setUser(data.data));
         toast.success('Profile updated successfully');
         navigate('/dashboard');
+      } else {
+        toast.error(data.message || 'Failed to update profile');
       }
     } catch (error) {
-      console.error('Update profile error:', error);
-      toast.error('Failed to update profile');
+      console.error('Update profile error:', error.response?.data || error.message);
+      toast.error(error.response?.data?.message || 'Failed to update profile');
     }
   };
 

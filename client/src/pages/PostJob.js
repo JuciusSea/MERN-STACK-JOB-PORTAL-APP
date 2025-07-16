@@ -8,17 +8,19 @@ import InputFrom from '../components/shared/InputFrom';
 import Spinner from '../components/shared/Spinner';
 
 const PostJob = () => {
-  const [title, setTitle] = useState('');
+  const [position, setPosition] = useState(''); // Changed from title
   const [company, setCompany] = useState('');
-  const [location, setLocation] = useState('');
+  const [workLocation, setWorkLocation] = useState(''); // Changed from location
   const [description, setDescription] = useState('');
+  const [workType, setWorkType] = useState(''); // Added for schema
+  const [status, setStatus] = useState(''); // Added for schema
   const { loading } = useSelector((state) => state.alerts);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post('/api/v1/jobs', { title, company, location, description }, {
+      const { data } = await axios.post('/api/v1/jobs', { position, company, workLocation, description, workType, status }, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
       });
       if (data.success) {
@@ -26,8 +28,8 @@ const PostJob = () => {
         navigate('/jobs');
       }
     } catch (error) {
-      console.error('Post job error:', error);
-      toast.error('Failed to post job');
+      console.error('Post job error:', error.response?.data || error.message);
+      toast.error(error.response?.data?.message || 'Failed to post job');
     }
   };
 
@@ -39,12 +41,12 @@ const PostJob = () => {
       ) : (
         <form className="card p-3" onSubmit={handleSubmit}>
           <InputFrom
-            htmlFor="title"
-            labelText="Job Title"
+            htmlFor="position"
+            labelText="Job Position"
             type="text"
-            name="title"
-            value={title}
-            handleChange={(e) => setTitle(e.target.value)}
+            name="position"
+            value={position}
+            handleChange={(e) => setPosition(e.target.value)}
           />
           <InputFrom
             htmlFor="company"
@@ -55,12 +57,28 @@ const PostJob = () => {
             handleChange={(e) => setCompany(e.target.value)}
           />
           <InputFrom
-            htmlFor="location"
-            labelText="Location"
+            htmlFor="workLocation"
+            labelText="Work Location"
             type="text"
-            name="location"
-            value={location}
-            handleChange={(e) => setLocation(e.target.value)}
+            name="workLocation"
+            value={workLocation}
+            handleChange={(e) => setWorkLocation(e.target.value)}
+          />
+          <InputFrom
+            htmlFor="workType"
+            labelText="Work Type"
+            type="text"
+            name="workType"
+            value={workType}
+            handleChange={(e) => setWorkType(e.target.value)}
+          />
+          <InputFrom
+            htmlFor="status"
+            labelText="Status"
+            type="text"
+            name="status"
+            value={status}
+            handleChange={(e) => setStatus(e.target.value)}
           />
           <div className="mb-3">
             <label htmlFor="description" className="form-label">Description</label>

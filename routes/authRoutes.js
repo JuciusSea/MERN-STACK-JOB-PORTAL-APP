@@ -4,6 +4,7 @@ import {
   registerController,
 } from "../controllers/authController.js";
 import rateLimit from "express-rate-limit";
+import userAuth from "../middlewares/authMiddleware.js"; // Fixed path
 
 //ip limiter
 const limiter = rateLimit({
@@ -17,7 +18,6 @@ const limiter = rateLimit({
 const router = express.Router();
 
 //routes
-
 /**
  * @swagger
  * components:
@@ -87,8 +87,6 @@ const router = express.Router();
  *        500:
  *          description: internal serevr error
  */
-
-// REGISTER || POPST
 router.post("/register", limiter, registerController);
 
 /**
@@ -113,9 +111,6 @@ router.post("/register", limiter, registerController);
  *      500:
  *        description: something went wrong
  */
-
-// LOGIN || POST
 router.post("/login", limiter, loginController);
 
-//export
 export default router;

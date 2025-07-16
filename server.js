@@ -1,23 +1,20 @@
-// API DOcumenATion
+// API Documentation
 import swaggerUi from "swagger-ui-express";
 import swaggerDoc from "swagger-jsdoc";
-// packages imports
+// packages Imports
 import express from "express";
 import "express-async-errors";
 import dotenv from "dotenv";
 import colors from "colors";
 import cors from "cors";
 import morgan from "morgan";
-//securty packges
 import helmet from "helmet";
 import xss from "xss-clean";
 import mongoSanitize from "express-mongo-sanitize";
-// files imports
 import connectDB from "./config/db.js";
-// routes import
 import testRoutes from "./routes/testRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
-import errroMiddelware from "./middelwares/errroMiddleware.js";
+import errorMiddleware from "./middlewares/errorMiddleware.js";
 import jobsRoutes from "./routes/jobsRoute.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -28,7 +25,6 @@ dotenv.config();
 connectDB();
 
 // Swagger api config
-// swagger api options
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -51,7 +47,7 @@ const spec = swaggerDoc(options);
 const app = express();
 
 //middelwares
-app.use(helmet(``));
+app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
 app.use(express.json());
@@ -62,13 +58,13 @@ app.use(morgan("dev"));
 app.use("/api/v1/test", testRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/user", userRoutes);
-app.use("/api/v1/job", jobsRoutes);
+app.use("/api/v1/jobs", jobsRoutes);
 
 //homeroute root
 app.use("/api-doc", swaggerUi.serve, swaggerUi.setup(spec));
 
 //validation middelware
-app.use(errroMiddelware);
+app.use(errorMiddleware);
 
 //port
 const PORT = process.env.PORT || 8080;
