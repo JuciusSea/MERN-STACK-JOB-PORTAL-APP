@@ -21,6 +21,9 @@ router.get("/", userAuth, getAllJobsController);
 // GET JOB BY ID || GET
 router.get("/:id", userAuth, getJobByIdController);
 
+// GET APPLICATION STATUS || GET
+router.get("/:id/status", userAuth, getApplicationStatusController);
+
 // APPLY JOB || POST
 router.post("/:id/apply", userAuth, applyJobController);
 
@@ -32,5 +35,4 @@ router.delete("/delete-job/:id", userAuth, deleteJobController);
 
 // JOB STATS FILTER || GET
 router.get("/job-stats", userAuth, jobStatsController);
-
 export default router;

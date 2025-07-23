@@ -66,9 +66,30 @@ export const applyJobController = async (req, res, next) => {
     if (!job) {
       return res.status(404).json({ success: false, message: `No job found with ID ${id}` });
     }
+    if (job.applicants.includes(req.user.userId)) {
+      return res.status(400).json({ success: false, message: "You have already applied for this job" });
+    }
+    job.applicants.push(req.user.userId);
+    await job.save();
     res.status(200).json({ success: true, message: "Application submitted successfully" });
   } catch (error) {
     console.error('Error in applyJobController:', error);
+    next(error.message);
+  }
+};
+
+// ======= GET APPLICATION STATUS ===========
+export const getApplicationStatusController = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const job = await Job.findById(id);
+    if (!job) {
+      return res.status(404).json({ success: false, message: `No job found with ID ${id}` });
+    }
+    const status = job.applicants && job.applicants.includes(req.user.userId) ? 'applied' : 'not_applied';
+    res.status(200).json({ success: true, status });
+  } catch (error) {
+    console.error('Error in getApplicationStatusController:', error);
     next(error.message);
   }
 };
