@@ -6,36 +6,60 @@ import axios from "axios";
 import { hideLoading, showLoading } from "../redux/features/alertSlice";
 import Spinner from "../components/shared/Spinner";
 import { toast } from "react-toastify";
+import { setUser } from "../redux/features/auth/authSlice"; // 🔥 Đảm bảo bạn đã import
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //hooks
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // redux state
   const { loading } = useSelector((state) => state.alerts);
 
-  // form function
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       dispatch(showLoading());
+
+      // Call login API
       const { data } = await axios.post("/api/v1/auth/login", {
         email,
         password,
       });
+
       if (data.success) {
-        dispatch(hideLoading());
         localStorage.setItem("token", data.token);
-        toast.success("Login SUccessfully ");
+        toast.success("Login Successfully");
+
+        // Fetch user info
+        const userRes = await axios.post(
+          "/api/v1/user/getUser",
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${data.token}`,
+            },
+          }
+        );
+
+        if (userRes.data.success) {
+          dispatch(setUser(userRes.data.data));
+          localStorage.setItem("user", JSON.stringify(userRes.data.data)); // 👉 nếu cần cho Layout
+        }
+
         navigate("/dashboard");
+      } else {
+        toast.error(data.message || "Login failed");
       }
+
+      dispatch(hideLoading());
     } catch (error) {
       dispatch(hideLoading());
-      toast.error("Invalid Credintial please try again!");
-      console.log(error);
+      console.error("Login error:", error);
+      toast.error("Login failed. Please check your credentials.");
     }
   };
+
   return (
     <>
       {loading ? (
@@ -52,24 +76,24 @@ const Login = () => {
 
             <InputFrom
               htmlFor="email"
-              labelText={"Email"}
-              type={"email"}
+              labelText="Email"
+              type="email"
+              name="email"
               value={email}
               handleChange={(e) => setEmail(e.target.value)}
-              name="email"
             />
             <InputFrom
               htmlFor="password"
-              labelText={"Password"}
-              type={"password"}
+              labelText="Password"
+              type="password"
+              name="password"
               value={password}
               handleChange={(e) => setPassword(e.target.value)}
-              name="password"
             />
 
             <div className="d-flex justify-content-between">
               <p>
-                Not a user <Link to="/register">Register Here!</Link>{" "}
+                Not a user? <Link to="/register">Register Here!</Link>
               </p>
               <button type="submit" className="btn btn-primary">
                 Login

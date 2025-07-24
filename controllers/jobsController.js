@@ -74,9 +74,10 @@ export const applyJobController = async (req, res, next) => {
     res.status(200).json({ success: true, message: "Application submitted successfully" });
   } catch (error) {
     console.error('Error in applyJobController:', error);
-    next(error.message);
+    res.status(500).json({ success: false, message: error.message || "Internal Server Error" });
   }
 };
+
 
 // ======= GET APPLICATION STATUS ===========
 export const getApplicationStatusController = async (req, res, next) => {

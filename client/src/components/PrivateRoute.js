@@ -6,7 +6,7 @@ import { setUser } from "../redux/features/auth/authSlice";
 import { Navigate } from "react-router-dom";
 import Spinner from "./shared/Spinner";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, allowedRoles = [] }) => {
   const { user } = useSelector((state) => state.auth);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
@@ -50,8 +50,10 @@ const PrivateRoute = ({ children }) => {
     }
   }, [user]);
 
-  if (isLoading) {
-    return <Spinner />;
+  if (isLoading) return <Spinner />;
+
+  if (allowedRoles.length > 0 && !allowedRoles.includes(user?.role)) {
+    return <Navigate to="/dashboard" />;
   }
 
   return isAuthenticated ? children : <Navigate to="/login" />;

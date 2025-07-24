@@ -2,9 +2,11 @@ import express from "express";
 import {
   loginController,
   registerController,
+  createEmployeeController,
 } from "../controllers/authController.js";
 import rateLimit from "express-rate-limit";
 import userAuth from "../middlewares/authMiddleware.js"; // Fixed path
+import authorizeRole from "../middlewares/authorizeRole.js";
 
 //ip limiter
 const limiter = rateLimit({
@@ -112,5 +114,6 @@ router.post("/register", limiter, registerController);
  *        description: something went wrong
  */
 router.post("/login", limiter, loginController);
+router.post('/create-employee', userAuth, authorizeRole('admin'), createEmployeeController);
 
 export default router;

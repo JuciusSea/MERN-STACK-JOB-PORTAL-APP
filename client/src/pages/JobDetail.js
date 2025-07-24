@@ -43,8 +43,8 @@ const JobDetail = () => {
       }
     } catch (error) {
       console.error('Apply error:', error.response?.data || error.message);
-      toast.error('Failed to apply. Please login.');
-      navigate('/login');
+      toast.error(error.response?.data?.message || 'Failed to apply. Please login.');
+      if (error.response?.status === 401) navigate('/login');
     }
   };
 
@@ -71,14 +71,15 @@ const JobDetail = () => {
             <strong>Posted:</strong> {moment(job.createdAt).format('MMM D, YYYY')}
           </p>
           <p className="text-gray-700 mb-4">
-            <strong>Applicants:</strong> {job.applicants.length}
+            <strong>Applicants:</strong> {Array.isArray(job.applicants) ? job.applicants.length : 0}
           </p>
+
           <p className="text-gray-700">
             <strong>Description:</strong>{' '}
             {expandedDescriptions[job._id]
               ? job.description
               : job.description.substring(0, 100) + (job.description.length > 100 ? '...' : '')}
-            {job.description.length > 100 && (
+            {job.description && job.description.length > 100 && (
               <button
                 className="text-blue-500 hover:underline ml-2"
                 onClick={() => toggleDescription(job._id)}
