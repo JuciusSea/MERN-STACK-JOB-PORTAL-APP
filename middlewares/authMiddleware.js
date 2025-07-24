@@ -7,12 +7,20 @@ const userAuth = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ success: false, message: 'No token provided' });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
     const user = await userModel.findById(decoded.userId).select('-password');
+
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid token' });
     }
-    req.user = { userId: user._id.toString() };
+
+    // Gán role và userId vào request
+    req.user = {
+      userId: user._id.toString(),
+      role: user.role || 'user', // mặc định là "user" nếu chưa có
+    };
+
     next();
   } catch (error) {
     console.error('Error in authMiddleware:', error);

@@ -14,6 +14,7 @@ import JobDetail from './pages/JobDetail';
 import PostJob from './pages/PostJob';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
+import CreateEmployee from './pages/CreateEmployee';
 import PrivateRoute from './components/PrivateRoute';
 import PublicRoute from './components/PublicRoute';
 
@@ -27,10 +28,11 @@ function App() {
             <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
             <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
             <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-            <Route path="/jobs" element={<PrivateRoute><Jobs /></PrivateRoute>} />
-            <Route path="/jobs/:id" element={<PrivateRoute><JobDetail /></PrivateRoute>} />
-            <Route path="/post-job" element={<PrivateRoute><PostJob /></PrivateRoute>} />
-            <Route path="/user/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+            <Route path="/post-job" element={<PrivateRoute allowedRoles={["employee"]}><PostJob /></PrivateRoute>} />
+            <Route path="/jobs" element={<PrivateRoute allowedRoles={["user", "employee"]}><Jobs /></PrivateRoute>} />
+            <Route path="/jobs/:id" element={<PrivateRoute allowedRoles={["user", "employee"]}><JobDetail /></PrivateRoute>} />
+            <Route path="//user/profile" element={<PrivateRoute allowedRoles={["user", "employee", "admin"]}><Profile/></PrivateRoute>}/>
+            <Route path="/create-employee" element={<PrivateRoute allowedRoles={["admin"]}><CreateEmployee /></PrivateRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           <ToastContainer />

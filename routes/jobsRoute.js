@@ -7,6 +7,7 @@ import {
   applyJobController,
   jobStatsController,
   updateJobController,
+  getApplicationStatusController,
 } from "../controllers/jobsController.js";
 import userAuth from "../middlewares/authMiddleware.js"; // Fixed path
 
